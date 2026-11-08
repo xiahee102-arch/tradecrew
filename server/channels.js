@@ -37,12 +37,12 @@ export async function ingest(env,tenant,{channel,external_id,name,text,event_id,
  await run(env,"UPDATE channel_events SET status='processed' WHERE id=?",eventKey);
  await audit(env,tenant,'channel-adapter','message.received',messageId,{channel,origin,event_id});
  if(opted)await audit(env,tenant,'gateway','customer.opted_out',customerId);
- else if(await active(env,tenant)){
-  const sub=await active(env,tenant),since=sub.plan==='trial'?sub.updated_at:new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString();
-  try{await quota(env,tenant,'inquiry',customerId,PLANS[sub.plan].inquiries,since);await enqueue(env,tenant,'service','reply',{customer_id:customerId,message_id:messageId});}
+ else{
+  const sub=await active(env,tenant),plan=sub?PLANS[sub.plan]:PLANS.monthly;
+  const since=sub&&sub.plan==='trial'?sub.updated_at:new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString();
+  try{await quota(env,tenant,'inquiry',customerId,plan.inquiries,since);await enqueue(env,tenant,'service','reply',{customer_id:customerId,message_id:messageId});}
   catch(e){await put(env,tenant,'blocker',{title:'询盘配额已用完',detail:e.message,customer_id:customerId,status:'open'});}
  }
- else await put(env,tenant,'blocker',{title:'新询盘等待处理',detail:'团队尚未开通或订阅已到期，请先开通团队。',customer_id:customerId,status:'open'});
  return {customer_id:customerId,message_id:messageId};
 }
 export async function webhook(env,request,ctx,drain){
@@ -81,7 +81,6 @@ export async function webhook(env,request,ctx,drain){
 }
 async function updateDelivery(env,tenant,ref,status){const messages=await records(env,tenant,'message');for(const m of messages)if(m.data.provider_message_id===ref)await put(env,tenant,'message',{...m.data,delivery_status:status},m.id);}
 export async function send(env,tenant,id){
- if(!await active(env,tenant))fail('订阅已到期，禁止对外发送。',402);
  const out=await record(env,tenant,id);if(!out||out.kind!=='outbox')fail('出站项不存在',404);
  const customer=await record(env,tenant,out.data.customer_id);if(!customer||customer.kind!=='customer')fail('客户不存在',404);
  if(customer.data.origin!=='live')fail('手动录入的消息不会通过真实渠道发送，请在买家原渠道操作。');

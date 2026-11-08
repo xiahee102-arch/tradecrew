@@ -1,97 +1,37 @@
-# 外贸助手 · MiMo AI 出海团队
+# 外贸助手 · AI 出海团队
 
-给中国建材工厂使用的全栈工作台：工厂事实库、出海问卷与战略、7 岗位协作、询盘、程序报价、双钥匙审批、订单与审计记录。
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/xiahee102-arch/tradecrew/tree/main)
 
-本仓库可上传 GitHub 供队友协作。**密钥不在源码里**；本地版使用真实 MiMo API，测试数据和人工录入有明确来源，不生成虚假付款。
+## 一键在云端运行
 
-## 队友在本机启动
+点击上方按钮并选择 **Create codespace**。项目会使用 Node.js 24，自动安装依赖、构建前后端、初始化本地数据库并启动 8899 端口，服务启动后自动打开软件页面。首次创建需要等待环境准备完成。
 
-建议安装 Node.js 24 LTS（最低 22.13），并确保电脑能访问 `api.xiaomimimo.com`。
+未配置模型密钥时也能进入界面；真实 AI 功能需要在 [Codespaces Secrets](https://github.com/settings/codespaces) 添加 `MIMO_API_KEY`，并授权此仓库。已有 Codespace 添加 Secret 后需停止再启动，使新 Secret 生效。不要把密钥写进源码。
 
-1. 克隆仓库，或下载 ZIP 后解压，进入含 `package.json` 的目录。
-2. 如8899端口还在运行旧版服务，先在旧终端按 Ctrl+C 关闭。
-3. macOS：运行 `bash start-local.command`；Windows：双击 `start-local.bat`。
-4. 首次启动会安装依赖，然后提示输入 MiMo Key。输入是隐藏的，粘贴后按回车。
-5. 终端显示启动完成后，打开 **http://localhost:8899/**。本地版无需 ChatGPT 登录。
-6. 创建自己的工厂。在“我的”点击“验证模型连接”，通过后上传产品文字、确认事实，再生成战略。
+软件页面对应 **PORTS → 8899 → Open in Browser**。请保留端口为 **Private**，本模式使用单用户开发身份，不作为公开多人服务。每个 Codespace 拥有独立数据；记录和文件保存在 `.local/state/`，删除 Codespace 会丢失未导出的数据。
 
-也可以使用终端：
+已有旧环境不会自动获得新代码。先保存或提交自己的修改，再运行 `git pull --ff-only`，然后执行命令面板 **Codespaces: Rebuild Container**。重建后会重新安装、构建和启动；上方入口新建环境时直接使用 `main` 最新内容。
+
+启动失败可查看 `.local/codespaces.log`。手动重新启动使用 `npm run codespaces:start`；源码修改后的日常开发可在终端停止旧服务后执行 `npm run local`，它会重新构建并启动。
+
+在自己的电脑运行：安装 Node.js 24 后执行 `npm ci` 和 `npm run local`，或使用 `start-local.bat` / `start-local.command`，首次按提示输入模型密钥。
+
+服务中国建材工厂的全栈平台：真实工厂工作区、可追溯产品事实、MiMo 七岗协作、市场战略、询盘收件箱、程序报价与双钥匙审批、订单记录、内容、渠道连接和订阅支付接口。
+
+- React 19 + Vite，响应式中文工作台，空数据起步。
+- Cloudflare Worker + D1 + R2，依赖 Sites 认证边界。
+- MiMo flash / pro 服务端调用，持久队列和审计。
+- WhatsApp Cloud API / Facebook Messenger 官方连接器；需自己的账号、令牌、公共回调网关。
+- 微信/支付宝商户网关契约；未配置不产生虚假付款。比赛期可部署 `payment-bridge/`（个人收款码 + 人工确认）演示闭环，正式运营换商户网关。
+- `scripts/check-mimo.mjs`：拿到 MIMO_API_KEY 后一条命令核验密钥、模型名与请求字段。
 
 ```bash
 npm ci
-npm run local
-```
-
-首次输入的密钥保存在本机 `.dev.vars`，数据库和文件保存在 `.local/state/`，这些均被 Git 忽略。之后启动不需要重复输入。更换密钥可修改本机 `.dev.vars` 中的 `MIMO_API_KEY`，然后重启。
-
-**localhost 是各自电脑的地址。**队友必须在自己的电脑启动；把你的 localhost 链接发给别人并不能共享服务。本地版仅绑定 `127.0.0.1`，不是公网多人部署。
-
-## 本地开发权限与真实业务的区别
-
-本地新建工厂会获得14天开发权限，以便测试客服、业务员、运营、法务和财务。页面会标注“本机单用户开发模式”，订阅状态为 `development`，没有“已支付”订单。真实 MiMo 调用仍消耗你们自己的 API 额度。
-
-本地入口自动提供固定的本机用户身份，拒绝外部 Host/Origin，不能用于公网身份认证。托管主站继续使用原有认证与付费规则。其他环境部署不会自动获得开发权限。
-
-- WhatsApp、Facebook、邮件均需各自的官方账号、令牌和公共回调；只填 MiMo Key 不会自动接通渠道。
-- 支付仅有商户网关接口；微信/支付宝真实下单仍需商户接入。
-- 未接渠道时，可在“生意”录入询盘测试工作流。模拟询盘请勾选模拟；手动录入不会自动通过真实渠道发送。
-- 签署、付款和物流进度由老板依据实际凭证记录。
-
-## 建议的联调顺序
-
-1. “我的”验证模型连接。
-2. “今天”上传自己的产品文字或文档。
-3. “商品资料”核对原文、确认事实，补足产品、交期、付款条款。
-4. 完成8题问卷，生成有来源编号的战略，确认目标。
-5. “商品资料 → 价格参数”设置真实成本、售价、毛利底线、起订量及交期来源。
-6. “生意 → 录入询盘”，填规格、原文数量及目的港；测试用的数据应标模拟。
-7. 查看客服需求、业务员自动报价、法务和财务审查；由老板批准。
-8. 记录买家确认、建立订单；“获客”生成内容，“数据”生成简报并查看日志。
-
-任务失败时会显示具体原因与重试入口，执行中断超过3分钟会转为可重试状态；不会永久停留在“研究中”。Pro 方案任务重试时会切换到 Flash，并在日志中记录，仍保留来源和置信度校验。
-
-## 上传 GitHub
-
-ZIP 应先解压，再把项目源码（包括 `.github/`、`.gitignore` 等隐藏文件）提交到仓库。仅上传一个 ZIP 文件不会运行 GitHub CI。
-
-先创建你自己的仓库，再在项目目录执行：
-
-```bash
-git init
-git add .
-git commit -m "Initial TradeCrew platform"
-git branch -M main
-git remote add origin https://github.com/YOUR_ORG/YOUR_REPO.git
-git push -u origin main
-```
-
-用真实仓库地址替换示例。如果当前目录已经是 Git 仓库，检查现有 remote 后再操作，不要覆盖不认识的远程地址。不要上传 `.dev.vars`、`.env`、证书、`.local/` 或 node_modules。
-
-GitHub Actions 已配置自动安装、构建和测试，无需 API Key，不调用真实模型。开发者自己的真实模型联调需要在本机配置密钥。
-
-GitHub 在这里负责保存和协作源码。本项目需要服务端，不能仅靠静态页面托管运行；面向评委共享的公网服务需要另外部署并配置身份、数据库和渠道网关。
-
-## 验证
-
-```bash
 npm run build
 npm test
 ```
 
-测试覆盖租户隔离、事实确认、模型连接、任务中断恢复、支付回调验签/幂等、退订/窗口拦截、报价审批、邮件/Meta事件去重、本地权限与持久化；策略页面另验证排队、失败重试、成功结果三种服务端渲染状态。供应商夹具测试与真实 API 联调分别说明，不能互相替代。
+详细接入与限制：[docs/接入与部署.md](docs/接入与部署.md)
+比赛映射与验收：[docs/比赛交付与验收.md](docs/比赛交付与验收.md)
 
-2026-11-08 已在隔离环境使用真实 MiMo Flash / Pro 验证：资料提取→确认事实→战略→模拟买家询盘→程序报价→法务/财务审查→老板批准→模拟订单→内容审查→经营简报。实际返回8条有原文依据的事实、1份报价、1个模拟订单、1篇待审批内容、1份简报；未发送外部消息、未收款、未写入生产业务数据。详细记录见 [本地联调更新](docs/版本更新-本地联调.md)。
-
-## 工程目录
-
-- `src/`：React 前端。
-- `server/`：MiMo 调用、岗位协作、业务 API。
-- `scripts/local.mjs`：本机启动入口。
-- `drizzle/`：D1 数据库迁移。
-- `gateway/`：公共渠道回调网关。
-- `tests/`：自动化测试。
-- `.github/workflows/ci.yml`：GitHub CI。
-- `docs/接入与部署.md`：渠道与支付接入详情。
-- `docs/比赛交付与验收.md`：比赛流程与验收对应。
-
-原托管身份记录位于 `.openai/hosting.json`，仅对应原站点。新建托管项目须通过对应平台创建自己的站点身份，不能将原 project_id 用作你自己的新站点。
+生产必须配置模型密钥、商户网关、Meta 应用和无人值守调度，才能完成真实外部业务。邮件通过 Resend 官方 API 接入，需要企业域名和接收 Webhook。未实装能力详见接入文档，不能称为全部比赛验收已通过。

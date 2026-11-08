@@ -1,8 +1,4 @@
-export async function api(path,body){
- let response;try{response=await fetch('/api'+path,{method:body===undefined?'GET':'POST',headers:body===undefined?{}:{'Content-Type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(130000)});}catch{throw Error('无法连接本地服务，或请求等待过久。请检查启动终端，再查看任务记录。');}
- let data;try{data=await response.json();}catch{throw Error('服务没有返回有效数据，请确认8899端口运行的是完整后端。');}
- if(!response.ok){const e=Error(data.error||'请求失败');e.status=response.status;throw e;}return data;
-}
+export async function api(path,body){const response=await fetch('/api'+path,{method:body===undefined?'GET':'POST',headers:body===undefined?{}:{'Content-Type':'application/json'},...(body===undefined?{}:{body:JSON.stringify(body)})});const data=await response.json();if(!response.ok){const e=Error(data.error||'请求失败');e.status=response.status;throw e;}return data;}
 export async function parseFile(file){
  if(file.size>15*1024*1024)throw Error('单个文件最多 15 MB');const buf=await file.arrayBuffer(),ext=file.name.split('.').pop().toLowerCase();let text='';
  if(ext==='pdf'){

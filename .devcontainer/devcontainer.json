@@ -1,0 +1,32 @@
+{
+  "name": "TradeCrew",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
+  "remoteUser": "node",
+  "forwardPorts": [8899],
+  "portsAttributes": {
+    "8899": {
+      "label": "TradeCrew 软件",
+      "onAutoForward": "openBrowser",
+      "protocol": "http"
+    }
+  },
+  "postCreateCommand": "node scripts/codespaces.mjs setup",
+  "postStartCommand": "node scripts/codespaces.mjs start",
+  "postAttachCommand": "node scripts/codespaces.mjs start",
+  "waitFor": "postCreateCommand",
+  "secrets": {
+    "MIMO_API_KEY": {
+      "description": "MiMo API Key；不填写也可打开界面，真实 AI 功能需配置后重启。"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "remote.autoForwardPorts": true,
+        "remote.portsAttributes": {
+          "8899": { "label": "TradeCrew 软件", "onAutoForward": "openBrowser" }
+        }
+      }
+    }
+  }
+}

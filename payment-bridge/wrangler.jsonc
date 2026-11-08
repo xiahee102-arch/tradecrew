@@ -1,0 +1,8 @@
+{
+  "name": "tradecrew-pay-bridge",
+  "main": "index.mjs",
+  "compatibility_date": "2026-01-01",
+  "assets": { "directory": "./assets" },
+  "kv_namespaces": [{ "binding": "ORDERS", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }],
+  "vars": { "PUBLIC_BASE_URL": "https://tradecrew-pay-bridge.REPLACE.workers.dev" }
+}

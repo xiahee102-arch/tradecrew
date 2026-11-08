@@ -9,4 +9,8 @@
 
 .checkbox-label{display:flex;align-items:center;gap:8px;margin:12px 0 20px;font-size:12px;color:#87998b}.checkbox-label input{width:15px;height:15px}
 
-.local-mode-note{display:flex;align-items:center;gap:6px;font-size:10px;color:#7f9485;margin:0 0 18px;padding:10px 13px;border:1px solid #dce8df;border-radius:7px;background:#eff6f0}.team .local-mode-note{margin:12px 17px}.inline-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.strategy-error .empty p{color:#9a7655;white-space:pre-wrap;max-width:650px}.model-connection{display:flex;gap:25px;align-items:center;justify-content:space-between;margin:0 0 30px}.model-connection p{font-size:12px;color:#91a397;margin-top:7px;line-height:1.9}.model-connection small{display:block;font-size:10px;margin-top:5px}@media(max-width:600px){.model-connection{flex-direction:column;align-items:stretch;gap:16px}.local-mode-note{font-size:9px;line-height:1.8}}
+.manager-guide{display:flex;align-items:center;gap:15px;background:#edf5ef;border-color:#dbe8de;flex-wrap:wrap}
+.manager-guide .guide-body{flex:1;min-width:220px}
+.manager-guide .guide-body h3{margin:7px 0 4px;font-size:15px;line-height:1.75;color:#2f5d40;font-weight:600}
+.manager-guide .guide-body p{font-size:11px;color:#87a08f;line-height:1.8}
+.manager-guide .guide-actions{display:flex;flex-direction:column;align-items:flex-end;gap:9px;flex-shrink:0}

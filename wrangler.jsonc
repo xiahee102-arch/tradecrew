@@ -1,1 +1,9 @@
-{"name":"tradecrew","main":"dist/server/index.js","compatibility_date":"2026-01-01","compatibility_flags":["nodejs_compat"],"d1_databases":[{"binding":"DB","database_name":"tradecrew-local","database_id":"local-tradecrew","migrations_dir":"drizzle"}],"r2_buckets":[{"binding":"BUCKET","bucket_name":"tradecrew-files"}]}
+{
+  "name": "tradecrew",
+  "main": "dist/server/index.js",
+  "compatibility_date": "2026-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": { "MIMO_PRO_MODEL": "mimo-v2.6-pro", "META_GRAPH_VERSION": "v23.0" },
+  "d1_databases": [{ "binding": "DB", "database_name": "tradecrew", "database_id": "c0187d28-7881-4183-807e-39ca7494b8e3", "migrations_dir": "drizzle" }],
+  "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "tradecrew" }]
+}

@@ -1,7 +1,6 @@
-import {now,uid,run,one,records,put,audit,active,fail} from './store.js';
+import {now,uid,run,one,records,put,audit,fail} from './store.js';
 import {enqueue} from './agents.js';
 export async function routeGaps(env,tenant){
- if(!await active(env,tenant))return {skipped:'团队尚未开通'};
  const strategy=(await records(env,tenant,'strategy')).find(s=>s.data.status==='approved');if(!strategy)return {skipped:'缺少已批准战略'};
  const date=new Date(Date.now()+8*3600000).toISOString().slice(0,10),customers=await records(env,tenant,'customer');
  const month=new Date(Date.now()+8*3600000).toISOString().slice(0,7);

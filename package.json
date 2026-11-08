@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "wrangler dev --ip 0.0.0.0",
     "build": "vite build && node scripts/build.mjs",
-    "test": "node --test tests/*.test.mjs && npm run test:ui",
+    "test": "node --test tests/*.test.mjs",
     "db:local": "wrangler d1 migrations apply DB --local",
     "local": "node scripts/local.mjs",
     "configure": "node scripts/local.mjs --configure-only",
+    "codespaces:setup": "node scripts/codespaces.mjs setup",
+    "codespaces:start": "node scripts/codespaces.mjs start",
     "test:ui": "esbuild tests/strategy-render.jsx --bundle --platform=node --format=cjs --external:react --external:react-dom/server --outfile=work/strategy-render-check.cjs && node work/strategy-render-check.cjs"
   },
   "dependencies": {

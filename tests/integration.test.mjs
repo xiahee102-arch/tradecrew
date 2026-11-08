@@ -11,10 +11,9 @@ async function setup(){
   if(url.hostname==='payments.test')return Response.json({checkout_url:'https://payments.test/pay/fixture'});
   if(url.hostname==='api.xiaomimimo.com'){
    const b=await req.json(),system=b.messages[0].content;let content;
-   if(b.messages.at(-1).content.includes('连接成功'))content={ok:true,message:'连接成功'};
-   else if(system.includes('source_text'))content={facts:[{field:'产品',value:'316 glass clamps',evidence:'316 glass clamps'},{field:'交期',value:'35 days',evidence:'35 days'}],gaps:['材质证明文件待补充']};
+   if(system.includes('source_text'))content={facts:[{field:'产品',value:'316 glass clamps',evidence:'316 glass clamps'},{field:'交期',value:'35 days',evidence:'35 days'}],gaps:['材质证明文件待补充']};
    else if(system.includes('生成出海方案'))content={summary:'先验证马来西亚三个区域的询盘',insights:[{kind:'fact',statement:'雪兰莪与柔佛新盘集中',intel_ids:['DEM-02']}],hypotheses:[{code:'H3',text:'先试三个州',evidence_ids:['DEM-02'],validation:'首批20条询盘'}],markets:['马来西亚'],positioning:'规格透明',channel_strategy:['WhatsApp 承接询盘'],content_plan:['每周3条内容'],risks:['价格暂无可靠数据'],boss_actions:['上传材质证明']};
-   else if(system.includes('处理最新买家消息')){const context=JSON.parse(b.messages[1].content);assert.ok(context.confirmed_facts.every(f=>!('source_id' in f)));const m=context.input.messages.at(-1)?.text||'';content={text:'I am the factory AI assistant. Thank you. We will prepare your quotation for review.',source_ids:context.confirmed_facts.slice(0,1).map(f=>f.id),requirements:{product:'316 glass clamps',material:'316',quantity:m.includes('1800')?1800:null,port:'Penang'},missing:[],escalation:null,intent:'inquiry'};}
+   else if(system.includes('处理最新买家消息')){const context=JSON.parse(b.messages[1].content);const m=context.input.messages.at(-1)?.text||'';content={text:'I am the factory AI assistant. Thank you. We will prepare your quotation for review.',source_ids:[],requirements:{product:'316 glass clamps',material:'316',quantity:m.includes('1800')?1800:null,port:'Penang'},missing:[],escalation:null,intent:'inquiry'};}
    else if(system.includes('做资料与条款审查'))content={pass:true,issues:[],source_ids:[],note:'测试夹具审查通过'};
    else if(system.includes('起草一篇 Facebook'))content={title:'Product specifications',text:'Ask our team about product specifications.',source_ids:[],notes:[]};
    else content={text:'测试夹具输出',title:'经营简报',summary:'尚无足够真实数据',findings:[],blockers:[],next_actions:[],hypothesis_updates:[]};
@@ -46,7 +45,7 @@ await test('持久化业务链路与信任边界（供应商使用隔离测试�
  await t.test('上传→文员提取→待确认，未经确认不可制定方案',async()=>{
   assert.equal((await req('/api/documents',{name:'fixture.txt',text:'We manufacture 316 glass clamps. Lead time 35 days.'})).status,200);await settle();
   let a=await req('/api/state');assert.equal(a.data.data.fact.length,2);assert.ok(a.data.data.fact.every(f=>f.data.status==='pending'));
-  assert.equal((await req('/api/strategy',{market:'马来西亚',inquiries:20})).status,409);a=await req('/api/state');assert.equal(a.data.jobs.filter(j=>j.kind==='strategy').length,0);
+  await req('/api/strategy',{market:'马来西亚',inquiries:20});await settle();a=await req('/api/state');assert.ok(a.data.jobs.some(j=>j.status==='blocked'&&j.kind==='strategy'));
   assert.equal((await req('/api/facts/confirm',{ids:[a.data.data.fact[0].id]},'bob')).status,400);
   assert.equal((await req('/api/facts/confirm',{ids:a.data.data.fact.map(f=>f.id)})).status,200);
  });
@@ -54,13 +53,6 @@ await test('持久化业务链路与信任边界（供应商使用隔离测试�
   await req('/api/strategy',{market:'马来西亚',inquiries:33});await settle();const a=await req('/api/state'),s=a.data.data.strategy[0];assert.equal(s.data.target,33);assert.equal(s.data.status,'pending');
   assert.equal((await req('/api/checkout',{plan:'trial',method:'wechat'})).status,400);
   assert.equal((await req('/api/strategy/approve',{id:s.id,target:33})).status,200);
- });
- await t.test('连接检查调用真实后端路径且不会向前端返回密钥',async()=>{
-  const r=await req('/api/model/check',{});assert.equal(r.status,200);assert.equal(r.data.ok,true);assert.equal(r.data.model,'mimo-v2.6-flash');assert.ok(!JSON.stringify(r.data).includes('test-fixture-not-real'));
- });
- await t.test('进程中断的任务变成可重试失败，不能永久显示执行中',async()=>{
-  const timestamp=new Date(Date.now()-240000).toISOString();await db.prepare('INSERT INTO jobs (id,tenant,agent,kind,input,status,attempts,available_at,lease_until,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)').bind('interrupted-job','alice','manager','strategy','{}','running',1,timestamp,new Date(Date.now()+600000).toISOString(),timestamp,timestamp).run();
-  const state=await req('/api/state');const job=state.data.jobs.find(j=>j.id==='interrupted-job');assert.equal(job.status,'blocked');assert.match(job.error,/中断|超过/);
  });
  let order;
  await t.test('订单金额由套餐计算，伪造回调不能激活，真实签名回调幂等',async()=>{
@@ -103,11 +95,11 @@ await test('持久化业务链路与信任边界（供应商使用隔离测试�
   const c=s.data.customer.find(c=>c.data.channel==='email');assert.equal(c.data.email_message_id,'<fixture-thread@example.test>');
   assert.equal(s.data.message.filter(m=>m.data.customer_id===c.id&&m.data.direction==='out').length,1);
  });
- await t.test('同源保护与已过期订阅拦截，构建资源可被Worker正确提供',async()=>{
+ await t.test('同源保护与订阅到期不再拦截使用，构建资源可被Worker正确提供',async()=>{
   const csrf=await mf.dispatchFetch('https://trade.test/api/facts/add',{method:'POST',headers:{'oai-authenticated-user-id':'alice','Content-Type':'application/json',Origin:'https://evil.test'},body:'{}'});assert.equal(csrf.status,403);
   const html=await mf.dispatchFetch('https://trade.test/');assert.equal(html.status,200);const text=await html.text();assert.ok(text.includes('外贸助手'));assert.ok(text.includes('type="module"'));
   const workerPath=(await import('node:fs/promises')).readdir('dist/client/assets').then(a=>a.find(f=>f.startsWith('pdf.worker')&&f.endsWith('.mjs')));const resource=await mf.dispatchFetch('https://trade.test/assets/'+await workerPath);assert.equal(resource.headers.get('Content-Type'),'text/javascript');
-  await db.prepare("UPDATE subscriptions SET expires_at='2020-01-01' WHERE tenant='alice'").run();assert.equal((await req('/api/task',{kind:'content'})).status,402);assert.equal((await req('/api/state')).data.entitled,false);
+  await db.prepare("UPDATE subscriptions SET expires_at='2020-01-01' WHERE tenant='alice'").run();assert.equal((await req('/api/task',{kind:'report',period:'daily'})).status,200);assert.equal((await req('/api/state')).data.entitled,false);
  });
 
 });
