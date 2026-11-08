@@ -1,0 +1,7 @@
+{
+  "name": "tradecrew-channel-gateway",
+  "main": "index.js",
+  "compatibility_date": "2026-01-01",
+  "triggers": {"crons": ["*/2 * * * *"]},
+  "vars": {"SITE_ORIGIN": "https://tradecrew-mimo.dewydrape8.chatgpt.site"}
+}

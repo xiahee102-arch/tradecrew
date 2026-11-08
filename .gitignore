@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+.env
+*.tar.gz
+
+work/
+.dev.vars.*
+
+.local/
+
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key

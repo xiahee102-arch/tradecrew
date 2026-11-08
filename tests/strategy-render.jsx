@@ -1,0 +1,10 @@
+import React from 'react';
+import assert from 'node:assert/strict';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {Strategy} from '../src/views.jsx';
+const base={data:{strategy:[],fact:[]},jobs:[],intel:[]};
+const render=state=>renderToStaticMarkup(<Strategy state={state} go={()=>{}} mutate={()=>{}} busy={false} guard={()=>true} onSource={()=>{}}/>);
+let html=render({...base,jobs:[{id:'pending-job',kind:'strategy',status:'pending'}]});assert.ok(html.includes('任务已保存'));assert.ok(html.includes('总管正在研究'));
+html=render({...base,jobs:[{id:'failed-job',kind:'strategy',status:'blocked',error:'MiMo 密钥无效'}]});assert.ok(html.includes('方案生成暂停'));assert.ok(html.includes('MiMo 密钥无效'));assert.ok(html.includes('重试这次任务'));assert.ok(!html.includes('总管正在研究'));
+html=render({...base,data:{strategy:[{id:'completed-job',created_at:new Date().toISOString(),data:{summary:'验证完成的出海方向',version:1,status:'pending',target:20,insights:[],hypotheses:[],markets:['马来西亚'],channel_strategy:[JSON.stringify({type:'WhatsApp',action:'承接自愿询盘',intel_ids:['CH-03']})],content_plan:[],boss_actions:[],risks:[],expectation:'先验证'}}]},jobs:[{id:'completed-job',kind:'strategy',status:'done'}]});assert.ok(html.includes('验证完成的出海方向'));assert.ok(html.includes('确认方案与目标'));assert.ok(html.includes('承接自愿询盘'));assert.ok(html.includes('依据：CH-03'));assert.ok(!html.includes('intel_ids'));assert.ok(!html.includes('总管正在研究'));
+console.log('Strategy render checks passed: pending, failure/retry, completed result.');

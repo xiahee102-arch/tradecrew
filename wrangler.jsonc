@@ -1,0 +1,1 @@
+{"name":"tradecrew","main":"dist/server/index.js","compatibility_date":"2026-01-01","compatibility_flags":["nodejs_compat"],"d1_databases":[{"binding":"DB","database_name":"tradecrew-local","database_id":"local-tradecrew","migrations_dir":"drizzle"}],"r2_buckets":[{"binding":"BUCKET","bucket_name":"tradecrew-files"}]}
