@@ -44,7 +44,7 @@ export async function handleLogin(request, env) {
 
 export function loginPage() {
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>登录 · 外贸助手</title><style>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>登录 · 建贸通</title><style>
 :root{--teal:#126b5d;--ink:#1c2b25;--muted:#7d8982;--line:#dfe6e2}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f7f6;font:15px/1.7 -apple-system,'PingFang SC','Microsoft YaHei',sans-serif;color:var(--ink)}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:38px 34px;width:min(400px,92vw);box-shadow:0 12px 40px #23392c0d}
@@ -56,7 +56,7 @@ button{width:100%;padding:13px;border:0;border-radius:9px;background:var(--teal)
 button:hover{filter:brightness(1.07)}.err{background:#fcece9;color:#ad5043;border-radius:8px;padding:10px 12px;font-size:12.5px;margin-bottom:14px;display:none}
 .note{margin-top:18px;font-size:11px;color:#94a095;line-height:1.9;text-align:center}
 </style></head><body><div class="card">
-<div class="brand"><span>盾</span><b>外贸助手</b></div>
+<div class="brand"><span>盾</span><b>建贸通</b></div>
 <h1>登录到你的工作区</h1>
 <p class="sub">输入团队口令和你的名字。每个人使用独立的工作区，互不干扰。</p>
 <div class="err" id="err"></div>

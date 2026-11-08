@@ -1,4 +1,4 @@
-// 外贸助手 · 个人收款码支付桥（比赛演示模式）
+// 建贸通 · 个人收款码支付桥（比赛演示模式）
 // 实现主站 docs/接入与部署.md 中的商户网关契约：
 //   POST /                    主站下单（HMAC 验签 + 5 分钟时间窗）→ 返回 checkout_url
 //   GET  /checkout/:id        收银页：个人收款码 + 转账备注 + 「我已转账」登记
@@ -37,7 +37,7 @@ function baseUrl(env) { return String(env.PUBLIC_BASE_URL || '').replace(/\/+$/,
 function layout(title, body, { banner = true } = {}) {
   return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(title)} · 外贸助手</title><style>
+<title>${esc(title)} · 建贸通</title><style>
 :root{--ink:#1c2b2a;--muted:#5c6f6d;--line:#e2e8e7;--bg:#f4f7f6;--card:#fff;--accent:#0f766e;--warn-bg:#fff7ed;--warn-line:#fdba74;--ok:#15803d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 -apple-system,'PingFang SC','Microsoft YaHei',sans-serif}
 .wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px}
@@ -68,7 +68,7 @@ code{background:var(--bg);border-radius:6px;padding:1px 6px;font-size:12px}
 .pill.ok{background:#dcfce7;color:#166534}.pill.wait{background:#fef3c7;color:#92400e}
 .err{color:#b91c1c}
 </style></head><body><div class="wrap">
-<div class="brand"><b>外贸助手</b><span>订阅收银台 · 比赛演示模式</span></div>
+<div class="brand"><b>建贸通</b><span>订阅收银台 · 比赛演示模式</span></div>
 ${banner ? '<div class="banner"><b>比赛演示模式：</b>使用店主个人收款码收款，转账后由店主人工核对到账并确认开通。正式运营将切换为微信支付商户 / 支付宝商家渠道，接口契约不变。</div>' : ''}
 ${body}
 <p class="note">收款与开通全程留有记录；AI 不接触支付工具。有疑问请联系店主。</p>

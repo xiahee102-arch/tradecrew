@@ -1,11 +1,11 @@
 {
-  "name": "TradeCrew",
+  "name": "建贸通",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
   "remoteUser": "node",
   "forwardPorts": [8899],
   "portsAttributes": {
     "8899": {
-      "label": "TradeCrew 软件",
+      "label": "建贸通 软件",
       "onAutoForward": "openBrowser",
       "protocol": "http"
     }
@@ -24,7 +24,7 @@
       "settings": {
         "remote.autoForwardPorts": true,
         "remote.portsAttributes": {
-          "8899": { "label": "TradeCrew 软件", "onAutoForward": "openBrowser" }
+          "8899": { "label": "建贸通 软件", "onAutoForward": "openBrowser" }
         }
       }
     }

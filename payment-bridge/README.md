@@ -53,7 +53,7 @@ curl -X POST http://localhost:8788/healthz # {"ok":true,...}
 下单自测（模拟主站签名）：
 
 ```bash
-BODY='{"out_trade_no":"test-0001","amount_fen":9900,"currency":"CNY","plan_code":"trial","method":"wechat","description":"外贸助手 试用版","notify_url":"http://localhost:8787/webhooks/payment"}'
+BODY='{"out_trade_no":"test-0001","amount_fen":9900,"currency":"CNY","plan_code":"trial","method":"wechat","description":"建贸通 试用版","notify_url":"http://localhost:8787/webhooks/payment"}'
 TS=$(date +%s000)
 SIG=$(printf '%s.%s' "$TS" "$BODY" | openssl dgst -sha256 -hmac "你的BRIDGE_SECRET" -hex | sed 's/^.*= //')
 curl -X POST http://localhost:8788/ -H 'Content-Type: application/json' -H "X-Trade-Timestamp: $TS" -H "X-Trade-Signature: $SIG" -d "$BODY"

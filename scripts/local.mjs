@@ -44,5 +44,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){if(!res.headersSent)res.writeHead(500,{'Content-Type':'application/json; charset=utf-8'});const message=vars.MIMO_API_KEY?String(e.message).replaceAll(vars.MIMO_API_KEY,'[已隐藏]'):String(e.message);res.end(JSON.stringify({error:'本地服务错误：'+message}));}
 });
 server.on('error',async e=>{console.error(e.code==='EADDRINUSE'?`端口 ${port} 已占用，请先关闭旧版服务，或设置 PORT 换一个端口。`:'本地服务启动失败：'+e.message);await mf.dispose();process.exit(1);});
-server.listen(port,'127.0.0.1',()=>{console.log(`\n外贸助手已启动：http://localhost:${port}/\n本机单用户开发模式；数据库保存在 .local/state。密钥仅保存在本机 .dev.vars。\n新建工厂提供14天开发权限，账单不会伪造为已支付。请勿将此本地服务暴露到公网。\n按 Ctrl+C 关闭。`);});
+server.listen(port,'127.0.0.1',()=>{console.log(`\n建贸通已启动：http://localhost:${port}/\n本机单用户开发模式；数据库保存在 .local/state。密钥仅保存在本机 .dev.vars。\n新建工厂提供14天开发权限，账单不会伪造为已支付。请勿将此本地服务暴露到公网。\n按 Ctrl+C 关闭。`);});
 async function close(){server.close();await mf.dispose();await dispatcher.close();process.exit(0)}process.once('SIGINT',close);process.once('SIGTERM',close);

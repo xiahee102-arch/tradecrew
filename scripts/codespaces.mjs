@@ -74,7 +74,7 @@ async function start() {
 function showUrl() {
   const name = process.env.CODESPACE_NAME;
   const domain = process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN || 'app.github.dev';
-  console.log(`TradeCrew 已启动：http://localhost:${port}/`);
+  console.log(`建贸通 已启动：http://localhost:${port}/`);
   if (name) console.log(`软件入口：https://${name}-${port}.${domain}/`);
   console.log('保留 8899 端口为 Private。模型密钥通过 Codespaces Secrets 配置 MIMO_API_KEY。');
 }
@@ -84,13 +84,13 @@ try {
     if (major < 24) throw Error('云端环境需要 Node.js 24 或更新版本。');
     command(['ci', '--no-audit', '--no-fund']);
     command(['run', 'build']);
-    console.log('依赖和前后端构建已完成，容器启动后会自动运行 TradeCrew。');
+    console.log('依赖和前后端构建已完成，容器启动后会自动运行 建贸通。');
   } else if (process.argv[2] === 'start') {
     await start();
   } else {
     throw Error('用法：node scripts/codespaces.mjs setup | start');
   }
 } catch (error) {
-  console.error(`TradeCrew 自动启动失败：${error.message}`);
+  console.error(`建贸通 自动启动失败：${error.message}`);
   process.exitCode = 1;
 }

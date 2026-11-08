@@ -1,4 +1,4 @@
-# 外贸助手 · AI 出海团队
+# 建贸通 · AI 出海团队
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/xiahee102-arch/tradecrew/tree/main)
 
